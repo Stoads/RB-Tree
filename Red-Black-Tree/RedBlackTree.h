@@ -155,7 +155,7 @@ private:
 			else
 				s->l = c;
 	}
-	//추가된 노드가 어떤 규칙에 위반되는지 판단함
+	//추가된 노드가 규칙에 위반되는지 판단함
 	void judgeInsertNodeCase(nd* p) {
 		if (p == NULL)return;
 		//u는 p의 삼촌 노드
@@ -173,7 +173,7 @@ private:
 		else
 			insertNodeCase4(p);
 	}
-	//부모라면 검은색으로 현재 노드를 검은색으로 바꿈
+	//루트라면 현재 노드를 검은색으로 바꿈
 	void insertNodeCase1(nd* p) {
 		if (p->p == NULL)
 			p->col = BLACK;
@@ -228,7 +228,7 @@ private:
 		nd* s = brotherNode(p);
 		//한번의 회전도 일어나지 않았으므로 반드시 s는 NULL이 될 수 없음
 		//RED-BLACK TREE의 5번 성질에 의해서 p가 검은색 노드고 s가 빨간색 노드라면\
-								 s는 반드시 검은색 노드를 가진 두 자식이 존재하는 것이 자명함
+								 s는 반드시 NULL이 아닌 검은색인 두 자식이 존재하는 것이 자명함
 		if (s->col == RED) {
 			p->p->col = RED;
 			s->col = BLACK;
@@ -311,7 +311,7 @@ private:
 		if (p == NULL)return;
 		//현 노드의 자식을 구함
 		nd* c = p->r == NULL ? p->l : p->r;
-		//p가 NULL인 자식을 1개 갖고 있으면 false, 아니면 true
+		//p가 NULL인 자식을 1개 갖고 있으면 false, 갖고 있지 않다면 임의의 검은색을 가지는 c를 만들고 true
 		bool isChildCreated = false;
 		if (c == NULL) {
 			//NULL은 검은색으로 처리하므로, 임의의 자식에 검은색 노드를 할당함
@@ -339,7 +339,7 @@ private:
 		}
 		delete p;		//메모리의 누수를 막기 위해 p에 할당된 메모리를 해제함
 		siz--;		//노드 p가 지워졌으므로 크기 1 감소
-					//c가 임의로 만들어진 노드면 삭제함
+		//c가 임의로 만들어진 노드면 삭제함
 		if (isChildCreated) {
 			if (c->p != NULL) {
 				if (c->p->l == c)
@@ -350,7 +350,8 @@ private:
 			c->p = NULL;
 			delete c;
 		}
-		if (!siz) {		//트리의 크기가 0이 되었으면 트리를 초기 상태로 되돌림
+		//트리의 크기가 0이 되었으면 트리를 초기 상태로 되돌림
+		if (!siz) {	
 			head = NULL;
 			first = NULL;
 			last = NULL;
@@ -456,6 +457,7 @@ public:
 	}
 	/* find -> RBNode&
 	key값을 키로 갖는 노드를 찾아서 반환한다
+	key값을 키로 갖는 노드가 없다면 END 노드를 반환한다
 	*/
 	RBNode& find(K key) {
 		nd* p = head;
