@@ -1,7 +1,8 @@
 #ifndef __RED_BLACK_TREE_H__
 #define __RED_BLACK_TREE_H__
 #ifndef NULL
-#define NULL (void*)0
+#define __NULL_IS_DEFINED__
+#define NULL (nd*)0
 #endif//NULL
 /* Header File Info
 	작성 시작 : 2017 - 04 - 08 오후 8시 53분
@@ -53,16 +54,16 @@ private:
 			return *p->n;
 		};
 		bool operator==(RBNode& desc) {
-			return this->key == desc.key;
+			return this->key == desc.key && this->b==desc.b;
 		}
 		bool operator==(RBNode&& desc) {
-			return this->key == desc.key;
+			return this->key == desc.key && this->b == desc.b;
 		}
 		bool operator!=(RBNode& desc) {
-			return this->key != desc.key;
+			return this->key != desc.key || this->b != desc.b;
 		}
 		bool operator!=(RBNode&& desc) {
-			return this->key != desc.key;
+			return this->key != desc.key || this->b != desc.b;
 		}
 		//Key값을 반환함
 		K getKey() { return key; }
@@ -407,11 +408,23 @@ public:
 		}
 		auto k = p;
 		if (p->l != NULL && p->r != NULL) {
-			k = p->b;
+			k = p->b;			//양쪽 자식 모두 있기때문에 p의 바로 전이 있는 것은 자명함
 			p->key = k->key;
 			p->data = k->data;
 		}
+		if(k->n!=NULL)
+			k->n->b = k->b;
+		if(k->b!=NULL)
+			k->b->n = k->n;
 		deleteOneChildNode(k);
+		if (head != NULL) {
+			first = head;
+			while (first->l != NULL)first = first->l;
+			last = head;
+			while (last->r != NULL)last = last->r;
+			end->b = last;
+			last->n = end;
+		}
 	}
 	/* clear
 	트리를 초기 상태로 되돌린다
@@ -538,3 +551,6 @@ public:
 	}
 };
 #endif//__RED_BLACK_TREE_H__
+#ifdef __NULL_IS_DEFINED__
+#undef NULL
+#endif//__NULL_IS_DEFINED__
